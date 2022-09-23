@@ -1,7 +1,12 @@
-import { VStack, Input as NativeBaseInput, IInputProps, Heading as Label } from 'native-base';
-import React from 'react';
+import {
+  VStack,
+  Input as NativeBaseInput,
+  IInputProps,
+  Heading as Label
+} from 'native-base'
+import React from 'react'
 
-export function Input({  ...rest }: IInputProps) {
+export function Input({ ...rest }: IInputProps) {
   return (
     <NativeBaseInput
       bg="green.300"
@@ -14,10 +19,10 @@ export function Input({  ...rest }: IInputProps) {
       placeholderTextColor="white"
       _focus={{
         borderWidth: 1,
-        borderColor: "green.500",
-        bg: "green.600"
+        borderColor: 'green.500',
+        bg: 'green.600'
       }}
       {...rest}
     />
-  );
+  )
 }
