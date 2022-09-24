@@ -36,24 +36,10 @@ function ScreenRegister({ navigation }) {
         setListUf([...data])
       })
   }
-  function loadCity(id) {
-    let url = 'https://servicodados.ibge.gov.br/api/v1/'
-    url = url + `localidades/estados/${id}/municipios`
-    fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        data.sort((a, b) => a.nome.localeCompare(b.nome))
-        setListCity([...data])
-      })
-  }
+
   React.useEffect(() => {
     loadUf()
   }, [])
-  React.useEffect(() => {
-    if (uf) {
-      loadCity(uf)
-    }
-  }, [uf])
 
   async function onClickRegister() {
     if (email === '' || password === '') {
@@ -84,8 +70,7 @@ function ScreenRegister({ navigation }) {
             onChange={e => setUf(e.target.value)}
           >
             {listUf.map((a, b) => (
-              // eslint-disable-next-line react/jsx-key
-              <option value={a.id}>
+              <option value={a.id} key={a.id}>
                 {a.sigla} - {a.nome}
               </option>
             ))}
@@ -113,6 +98,8 @@ function ScreenRegister({ navigation }) {
           />
           <Input
             mb={2}
+            dataDetectorTypes="phoneNumber"
+            keyboardType="phone-pad"
             placeholder="Telefone: (xx) xxxxx-xxxx"
             InputLeftElement={
               <Icon
