@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ToastAndroid } from 'react-native'
-
+import { getDatabase, ref, onValue, set } from 'firebase/database'
 import { auth } from '../services/firebase'
 import {
   signInWithEmailAndPassword,
@@ -40,15 +40,36 @@ export const UserContextProvider = ({ children }) => {
     setIsLoading(false)
   }
 
-  const registerAccount = async (email, password) => {
+  const registerAccount = async (
+    email,
+    password,
+    Name,
+    emailA,
+    Telefone,
+    Gender,
+    uf,
+    cityA,
+    districtA
+  ) => {
     setIsLoading(true)
     await createUserWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
         const user = userCredential.user
-        ToastAndroid.show('Registrado com sucesso', ToastAndroid.SHORT)
         setIsLoading(false)
         AsyncStorage.setItem('@user', JSON.stringify(user))
         setUser(user)
+        ToastAndroid.show('Registrado com sucesso', ToastAndroid.SHORT)
+        const db = getDatabase()
+        const reference = ref(db, 'users/' + user.uid)
+        set(reference, {
+          name: Name,
+          email: emailA,
+          phone: Telefone,
+          sex: Gender,
+          state: uf,
+          city: cityA,
+          district: districtA
+        })
       })
       .catch(error => {
         setIsLoading(false)
@@ -63,11 +84,6 @@ export const UserContextProvider = ({ children }) => {
         }
         if (error.code === 'auth/invalid-email') {
           ToastAndroid.show('Email inválido.', ToastAndroid.LONG)
-        } else {
-          ToastAndroid.show(
-            'Ocorreu um erro, tente novamente mais tarde.',
-            ToastAndroid.LONG
-          )
         }
       })
   }
@@ -83,7 +99,6 @@ export const UserContextProvider = ({ children }) => {
         setUser(JSON.parse(user))
       }
     }
-
     getLocalUser()
   }, [])
 

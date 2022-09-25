@@ -6,6 +6,7 @@ import { Register } from '../pages/Register'
 import { Dashboard } from '../pages/Dashboard'
 import { Profile } from '../pages/Profile'
 import { useTheme } from 'native-base'
+import { ToastAndroid } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 export default function Routes() {
   const { user } = useContext(UserContext)
@@ -19,7 +20,6 @@ export default function Routes() {
             screenOptions={({ route }) => ({
               tabBarIcon: ({ focused, color, size }) => {
                 let iconName
-
                 if (route.name === 'Dashboard') {
                   iconName = 'document-text-outline'
                 } else if (route.name === 'Perfil') {

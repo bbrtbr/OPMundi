@@ -1,16 +1,27 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { UserContext } from '../contexts/UserContext'
-import { VStack, Icon, useTheme, Image, Text, Modal, Select } from 'native-base'
+import {
+  VStack,
+  Icon,
+  useTheme,
+  Image,
+  Text,
+  Modal,
+  Select,
+  Checkbox,
+  Toast
+} from 'native-base'
 import { Ionicons } from '@expo/vector-icons'
 import { ToastAndroid, TouchableOpacity } from 'react-native'
 import { Login } from './Login'
+
 import { Input } from '../components/input'
 import { Button } from '../components/button'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 const Stack = createNativeStackNavigator()
 function ScreenRegister({ navigation }) {
-  const [email, setEmail] = useState('')
+  const [emailA, setEmail] = useState('')
   const [Name, setName] = useState('')
   const [Gender, setGender] = useState('')
   const [Telefone, setTelefone] = useState('')
@@ -19,30 +30,66 @@ function ScreenRegister({ navigation }) {
   const [password, setPassword] = useState('')
   const [confPassword, setconfPassword] = useState('')
   const { colors } = useTheme()
-  const { registerAccount, isLoading } = useContext(UserContext)
+  const [cityA, setCity] = useState('')
+  const [districtA, setDistrict] = useState('')
+  const [listCity, setListCity] = useState([])
+  const { registerAccount, isLoading, user } = useContext(UserContext)
   const [showPassword, setShowPassword] = useState(true)
-
-  const [uf, setUf] = React.useState('AC')
-  const [listUf, setListUf] = React.useState([])
-  const [city, setCity] = React.useState('')
-  const [listCity, setListCity] = React.useState([])
-  function loadUf() {
-    let url = 'https://servicodados.ibge.gov.br/'
-    url = url + 'api/v1/localidades/estados'
+  const [uf, setUf] = useState('Selecione:')
+  const [listUf, setListUf] = useState([])
+  async function onRegisterFinal() {
+    if (uf === '' || cityA === '' || districtA === '') {
+      ToastAndroid.show(
+        'Verifique se todos os campos foram preenchidos.',
+        ToastAndroid.LONG
+      )
+    } else {
+      await registerAccount(
+        emailA,
+        password,
+        Name,
+        emailA,
+        Telefone,
+        Gender,
+        uf,
+        cityA,
+        districtA
+      )
+    }
+  }
+  function loadCity(id) {
+    let url = 'https://servicodados.ibge.gov.br/api/v1/'
+    url = url + `localidades/estados/${id}/municipios`
     fetch(url)
       .then(response => response.json())
       .then(data => {
         data.sort((a, b) => a.nome.localeCompare(b.nome))
-        setListUf([...data])
+        setListCity(data)
       })
   }
-
-  React.useEffect(() => {
+  function loadUf() {
+    const apiUrl = 'https://servicodados.ibge.gov.br/'
+    const statesUrl = apiUrl + 'api/v1/localidades/estados'
+    fetch(statesUrl)
+      .then(response => response.json())
+      .then(data => {
+        data.sort((a, b) => a.nome.localeCompare(b.nome))
+        setListUf(data)
+      })
+  }
+  useEffect(() => {
     loadUf()
+    // console.log('id: ' + listUf[0].id + '\nend')
   }, [])
 
+  useEffect(() => {
+    if (uf) {
+      loadCity(uf)
+    }
+  }, [uf])
+
   async function onClickRegister() {
-    if (email === '' || password === '') {
+    if (emailA === '' || password === '') {
       ToastAndroid.show(
         'Verifique se todos os campos foram preenchidos.',
         ToastAndroid.LONG
@@ -64,17 +111,48 @@ function ScreenRegister({ navigation }) {
         onClose={() => setShowModalLocal(false)}
       >
         <Modal.Content>
+          <Modal.Header>Última etapa do cadastro.</Modal.Header>
           <Select
-            value={uf}
-            backgroundColor="white"
-            onChange={e => setUf(e.target.value)}
+            selectedValue={uf}
+            bg="green.300"
+            mb="2"
+            fontSize="md"
+            fontFamily="body"
+            color="white"
+            onValueChange={itemValue => setUf(itemValue)}
+            placeholder="Estado:"
+            height={'55'}
           >
-            {listUf.map((a, b) => (
-              <option value={a.id} key={a.id}>
-                {a.sigla} - {a.nome}
-              </option>
+            {listUf.map(a => (
+              <Select.Item key={a.id} label={a.nome} value={a.sigla} />
             ))}
           </Select>
+
+          <Select
+            selectedValue={uf}
+            bg="green.300"
+            mb="2"
+            fontSize="md"
+            fontFamily="body"
+            onValueChange={itemValue => setUf('aaa')}
+            placeholder="Cidade:"
+            height={'55'}
+          >
+            {listCity.map(a => (
+              <Select.Item key={a.id} label={a.nome} value={a.sigla} />
+            ))}
+          </Select>
+          <Input
+            placeholder="Bairro"
+            height={'55'}
+            mb="2"
+            onChangeText={setDistrict}
+          />
+          <Button
+            onPress={onRegisterFinal}
+            isLoading={isLoading}
+            title="Cadastrar"
+          />
         </Modal.Content>
       </Modal>
       <Modal
@@ -96,6 +174,7 @@ function ScreenRegister({ navigation }) {
             }
             onChangeText={setName}
           />
+          <Text>Obs: Seu número não será compartilhado!.</Text>
           <Input
             mb={2}
             dataDetectorTypes="phoneNumber"
@@ -116,7 +195,7 @@ function ScreenRegister({ navigation }) {
             height="55"
             width={'100%'}
             backgroundColor="#04D361"
-            onValueChange={(itemValue: string) => setGender(itemValue)}
+            onValueChange={itemValue => setGender(itemValue)}
           >
             <Select.Item label="Masculino" value="Masculino" />
             <Select.Item label="Feminino" value="Feminino" />
@@ -124,8 +203,15 @@ function ScreenRegister({ navigation }) {
           </Select>
           <Button
             onPress={() => {
-              setShowModalLocal(true)
-              setShowModal(false)
+              if (Gender === '' || Telefone === '' || Name === '') {
+                ToastAndroid.show(
+                  'Verifique se todos os campos foram preenchidos.',
+                  ToastAndroid.LONG
+                )
+              } else {
+                setShowModalLocal(true)
+                setShowModal(false)
+              }
             }}
             mt="4"
             title="Prosseguir"
@@ -165,11 +251,17 @@ function ScreenRegister({ navigation }) {
         }
         secureTextEntry={showPassword}
       />
-
+      <Checkbox
+        onChange={() => setShowPassword(!showPassword)}
+        mb={3}
+        color="gray.300"
+      >
+        Mostrar Senha
+      </Checkbox>
       <Button
         onPress={onClickRegister}
         isLoading={isLoading}
-        title="Registrar"
+        title="Continuar"
         w="100%"
       />
 
