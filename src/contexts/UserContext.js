@@ -1,11 +1,12 @@
 import React, { createContext, useState, useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ToastAndroid } from 'react-native'
-import { getDatabase, ref, onValue, set } from 'firebase/database'
+import { getDatabase, ref, set } from 'firebase/database'
 import { auth } from '../services/firebase'
 import {
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail
 } from 'firebase/auth'
 
 export const UserContext = createContext(null)
@@ -92,6 +93,23 @@ export const UserContextProvider = ({ children }) => {
     setUser(null)
   }
 
+  const resetPass = async email => {
+    await sendPasswordResetEmail(auth, email)
+      .then(() => {
+        ToastAndroid.show(
+          'Email de recuperação enviado com sucesso.',
+          ToastAndroid.LONG
+        )
+      })
+      .catch(error => {
+        const errorCode = error.code
+        ToastAndroid.show(
+          'Ocorreu um erro, você realmente tem cadastro?',
+          ToastAndroid.LONG
+        )
+      })
+  }
+
   useEffect(() => {
     async function getLocalUser() {
       const user = await AsyncStorage.getItem('@user')
@@ -109,7 +127,8 @@ export const UserContextProvider = ({ children }) => {
         user,
         signIn,
         signOut,
-        isLoading
+        isLoading,
+        resetPass
       }}
     >
       {children}

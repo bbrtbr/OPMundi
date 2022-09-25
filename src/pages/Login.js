@@ -10,17 +10,22 @@ import {
   Checkbox
 } from 'native-base'
 import { Ionicons } from '@expo/vector-icons'
-import { TouchableOpacity } from 'react-native'
+import { TouchableOpacity, ToastAndroid } from 'react-native'
 import { Input } from '../components/input'
 import { Button } from '../components/button'
-
 export function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(true)
-  const { signIn, isLoading } = useContext(UserContext)
+  const { signIn, isLoading, resetPass } = useContext(UserContext)
   const { colors } = useTheme()
-
+  function onClickResetPass() {
+    if (email === '') {
+      ToastAndroid.show('Preencha seu email.', ToastAndroid.LONG)
+    } else {
+      resetPass(email)
+    }
+  }
   return (
     <VStack flex={1} alignItems="center" bg="white" px={8} pt={24}>
       <Image
@@ -71,7 +76,7 @@ export function Login() {
         }}
         isLoading={isLoading}
       />
-      <TouchableOpacity>
+      <TouchableOpacity onPress={onClickResetPass}>
         <Text>Esqueceu sua senha?</Text>
       </TouchableOpacity>
     </VStack>

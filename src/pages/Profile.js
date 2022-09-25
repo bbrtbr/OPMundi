@@ -6,9 +6,6 @@ import { Button } from '../components/button'
 export function Profile() {
   const { signOut } = useContext(UserContext)
 
-  useEffect(() => {
-    signOut()
-  }, [])
   return (
     <VStack flex={1} alignItems="center" bg="gray.600" px={8} pt={24}>
       <Button onPress={signOut}>Sair</Button>

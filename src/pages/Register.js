@@ -8,8 +8,7 @@ import {
   Text,
   Modal,
   Select,
-  Checkbox,
-  Toast
+  Checkbox
 } from 'native-base'
 import { Ionicons } from '@expo/vector-icons'
 import { ToastAndroid, TouchableOpacity } from 'react-native'
@@ -33,7 +32,7 @@ function ScreenRegister({ navigation }) {
   const [cityA, setCity] = useState('')
   const [districtA, setDistrict] = useState('')
   const [listCity, setListCity] = useState([])
-  const { registerAccount, isLoading, user } = useContext(UserContext)
+  const { registerAccount, isLoading } = useContext(UserContext)
   const [showPassword, setShowPassword] = useState(true)
   const [uf, setUf] = useState('Selecione:')
   const [listUf, setListUf] = useState([])
@@ -129,17 +128,17 @@ function ScreenRegister({ navigation }) {
           </Select>
 
           <Select
-            selectedValue={uf}
+            selectedValue={cityA}
             bg="green.300"
             mb="2"
             fontSize="md"
             fontFamily="body"
-            onValueChange={itemValue => setUf('aaa')}
+            onValueChange={itemValue => setCity(itemValue)}
             placeholder="Cidade:"
             height={'55'}
           >
-            {listCity.map(a => (
-              <Select.Item key={a.id} label={a.nome} value={a.sigla} />
+            {listCity.map(b => (
+              <Select.Item key={b.id} label={b.nome} value={b.nome} />
             ))}
           </Select>
           <Input
@@ -193,6 +192,10 @@ function ScreenRegister({ navigation }) {
             placeholder="Gênero"
             selectedValue={Gender}
             height="55"
+            bg="green.300"
+            mb="2"
+            fontSize="md"
+            fontFamily="body"
             width={'100%'}
             backgroundColor="#04D361"
             onValueChange={itemValue => setGender(itemValue)}

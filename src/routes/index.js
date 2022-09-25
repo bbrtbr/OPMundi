@@ -20,7 +20,7 @@ export default function Routes() {
             screenOptions={({ route }) => ({
               tabBarIcon: ({ focused, color, size }) => {
                 let iconName
-                if (route.name === 'Dashboard') {
+                if (route.name === 'Home') {
                   iconName = 'document-text-outline'
                 } else if (route.name === 'Perfil') {
                   iconName = 'person'
@@ -32,10 +32,14 @@ export default function Routes() {
               tabBarStyle: {
                 backgroundColor: colors.white
               },
-              headerShown: false
+              headerShown: true
             })}
           >
-            <Tab.Screen name="Dashboard" component={Dashboard} />
+            <Tab.Screen
+              name="Home"
+              options={{ title: 'Home' }}
+              component={Dashboard}
+            />
             <Tab.Screen name="Perfil" component={Profile} />
           </Tab.Navigator>
         ) : (
