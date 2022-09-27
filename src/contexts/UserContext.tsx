@@ -1,8 +1,8 @@
-import React, { createContext, useState, useEffect } from 'react'
+import React, { FC, createContext, ReactNode, useState, useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ToastAndroid } from 'react-native'
-import { getDatabase, ref, set } from 'firebase/database'
-import { auth } from '../services/firebase'
+import { ref, set } from 'firebase/database'
+import { auth, database } from '../utils/firebase'
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -11,10 +11,15 @@ import {
 
 export const UserContext = createContext(null)
 
-export const UserContextProvider = ({ children }) => {
+interface UserContextProviderProps {
+  children: ReactNode | ReactNode[]
+}
+
+export const UserContextProvider: FC<UserContextProviderProps> = ({
+  children
+}) => {
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [imei, setImei] = useState('')
 
   const signIn = async (email, password) => {
     setIsLoading(true)
@@ -55,27 +60,21 @@ export const UserContextProvider = ({ children }) => {
   ) => {
     setIsLoading(true)
     await createUserWithEmailAndPassword(auth, email, password)
-      .then(userCredential => {
+      .then(async userCredential => {
         const user = userCredential.user
         setIsLoading(false)
-        AsyncStorage.setItem('@user', JSON.stringify(user))
+        await AsyncStorage.setItem('@user', JSON.stringify(user))
         setUser(user)
         ToastAndroid.show('Registrado com sucesso', ToastAndroid.SHORT)
-        const IMEI = require('react-native-imei')
-        IMEI.getImei().then(imeiList => {
-          setImei(imeiList)
-        })
-        const db = getDatabase()
-        const reference = ref(db, 'users/' + user.uid)
-        set(reference, {
+        const databaseReference = ref(database, 'users/' + user.uid)
+        set(databaseReference, {
           name: Name,
           email: emailA,
           phone: Telefone,
           sex: Gender,
           state: uf,
           city: cityA,
-          district: districtA,
-          IMEI: imei
+          district: districtA
         })
       })
       .catch(error => {
@@ -94,6 +93,7 @@ export const UserContextProvider = ({ children }) => {
         }
       })
   }
+
   const signOut = async () => {
     await AsyncStorage.removeItem('@user')
     setUser(null)
@@ -107,8 +107,7 @@ export const UserContextProvider = ({ children }) => {
           ToastAndroid.LONG
         )
       })
-      .catch(error => {
-        const errorCode = error.code
+      .catch(() => {
         ToastAndroid.show(
           'Ocorreu um erro, você realmente tem cadastro?',
           ToastAndroid.LONG
