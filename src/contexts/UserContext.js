@@ -14,6 +14,7 @@ export const UserContext = createContext(null)
 export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [imei, setImei] = useState('')
 
   const signIn = async (email, password) => {
     setIsLoading(true)
@@ -60,6 +61,10 @@ export const UserContextProvider = ({ children }) => {
         AsyncStorage.setItem('@user', JSON.stringify(user))
         setUser(user)
         ToastAndroid.show('Registrado com sucesso', ToastAndroid.SHORT)
+        const IMEI = require('react-native-imei')
+        IMEI.getImei().then(imeiList => {
+          setImei(imeiList)
+        })
         const db = getDatabase()
         const reference = ref(db, 'users/' + user.uid)
         set(reference, {
@@ -69,7 +74,8 @@ export const UserContextProvider = ({ children }) => {
           sex: Gender,
           state: uf,
           city: cityA,
-          district: districtA
+          district: districtA,
+          IMEI: imei
         })
       })
       .catch(error => {

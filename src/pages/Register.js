@@ -27,6 +27,7 @@ function ScreenRegister({ navigation }) {
   const [showModal, setShowModal] = useState(false)
   const [showModalLocal, setShowModalLocal] = useState(false)
   const [password, setPassword] = useState('')
+  const [birthDate, setbirthDate] = useState('')
   const [confPassword, setconfPassword] = useState('')
   const { colors } = useTheme()
   const [cityA, setCity] = useState('')

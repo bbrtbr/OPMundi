@@ -7,8 +7,10 @@ export function Profile() {
   const { signOut } = useContext(UserContext)
 
   return (
-    <VStack flex={1} alignItems="center" bg="gray.600" px={8} pt={24}>
-      <Button onPress={signOut}>Sair</Button>
+    <VStack flex={1} alignItems="center" bg="white" px={8} pt={24}>
+      <Button width={'100%'} title="Sair" onPress={signOut}>
+        Sair
+      </Button>
     </VStack>
   )
 }

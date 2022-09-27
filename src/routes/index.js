@@ -37,7 +37,7 @@ export default function Routes() {
           >
             <Tab.Screen
               name="Home"
-              options={{ title: 'Home' }}
+              options={{ title: 'Suas Opiniões' }}
               component={Dashboard}
             />
             <Tab.Screen name="Perfil" component={Profile} />
