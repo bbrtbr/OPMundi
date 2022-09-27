@@ -53,7 +53,6 @@ function ScreenRegister({ navigation }) {
         email,
         password,
         name,
-        email,
         phone,
         sex,
         state,
