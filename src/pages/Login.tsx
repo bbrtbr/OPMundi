@@ -13,12 +13,14 @@ import { Ionicons } from '@expo/vector-icons'
 import { TouchableOpacity, ToastAndroid } from 'react-native'
 import { Input } from '../components/input'
 import { Button } from '../components/button'
+
 export function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(true)
   const { signIn, isLoading, resetPass } = useContext(UserContext)
   const { colors } = useTheme()
+
   function onClickResetPass() {
     if (email === '') {
       ToastAndroid.show('Preencha seu email.', ToastAndroid.LONG)
@@ -26,12 +28,15 @@ export function Login() {
       resetPass(email)
     }
   }
+
   return (
     <VStack flex={1} alignItems="center" bg="white" px={8} pt={24}>
       <Image
         source={require('../assets/logotipo.png')}
+        resizeMode="contain"
         width={100}
         height={100}
+        alt={'OPMundi'}
       />
       <Heading color="gray.300" fontSize="xl" mt={6} mb={6}>
         Acesse sua conta
@@ -57,6 +62,7 @@ export function Login() {
       />
 
       <Checkbox
+        value={'Mostrar Senha'}
         onChange={() => setShowPassword(!showPassword)}
         mb={3}
         color="gray.300"
