@@ -53,3 +53,9 @@ buck-out/
 .expo/
 web-build/
 dist/
+
+# Environment Variables files
+.env
+.env.local
+.env.development
+.env.production
