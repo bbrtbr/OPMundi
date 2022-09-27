@@ -38,6 +38,7 @@
     "@types/react": "^18.0.21",
     "@types/react-native": "^0.70.4",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.4",
     "eslint": "^8.23.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard": "^17.0.0",
