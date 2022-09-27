@@ -1,4 +1,4 @@
-import { database } from '../services/firebase'
+import { database } from '../utils/firebase'
 import type { Form } from '../models/form'
 import { ref, get } from 'firebase/database'
 
