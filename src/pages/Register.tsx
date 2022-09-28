@@ -8,7 +8,8 @@ import {
   Text,
   Modal,
   Select,
-  Checkbox
+  Checkbox,
+  Heading
 } from 'native-base'
 import { Ionicons } from '@expo/vector-icons'
 import {
@@ -247,6 +248,9 @@ function ScreenRegister({ navigation }) {
           height={'95'}
           alt="OPMundi"
         />
+        <Heading color="gray.300" fontSize="xl" mt={'2'}>
+          Crie sua conta
+        </Heading>
         <Input
           mt={3}
           mb={4}
