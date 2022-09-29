@@ -19,7 +19,7 @@ interface UserContextProviderProps {
 export const UserContextProvider: FC<UserContextProviderProps> = ({
   children
 }) => {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
   const signIn = async (email: string, password: string) => {
@@ -31,7 +31,7 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
         const user: User = await getUserFromDatabase(uid)
         ToastAndroid.show('Login realizado com sucesso', ToastAndroid.SHORT)
         AsyncStorage.setItem('@user', JSON.stringify(user))
-        setUser(userFromAuthCredential)
+        setUser(user)
       })
       .catch(error => {
         if (error.code === 'auth/user-not-found') {
@@ -46,7 +46,6 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
           )
         }
       })
-
     setIsLoading(false)
   }
 
@@ -77,11 +76,8 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
         }
         await insertUserIntoDatabase(user).then(async () => {
           setIsLoading(false)
-          await AsyncStorage.setItem(
-            '@user',
-            JSON.stringify(userFromAuthCredential)
-          )
-          setUser(userFromAuthCredential)
+          await AsyncStorage.setItem('@user', JSON.stringify(user))
+          setUser(user)
           ToastAndroid.show('Registrado com sucesso', ToastAndroid.SHORT)
         })
       })
@@ -103,6 +99,7 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
   }
 
   const signOut = async () => {
+    await auth.signOut()
     await AsyncStorage.removeItem('@user')
     setUser(null)
   }
