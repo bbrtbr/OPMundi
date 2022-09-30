@@ -47,6 +47,32 @@ export function FormPage(props) {
       <Heading fontSize={'lg'} mt={4} mb={4}>
         {props.route.params.question}
       </Heading>
+      <HStack
+        justifyContent={'center'}
+        borderColor={
+          selectedItem?.backgroundColor != null
+            ? selectedItem.backgroundColor
+            : 'green.500'
+        }
+        borderRadius={'md'}
+        p={2}
+        my={2}
+      >
+        <Center>
+          <Center
+            backgroundColor={
+              selectedItem?.backgroundColor != null
+                ? selectedItem.backgroundColor
+                : '#a2a2a2'
+            }
+            p={1}
+            mr={4}
+            borderRadius={'full'}
+            width={63}
+            height={63}
+          />
+        </Center>
+      </HStack>
       <FlatList
         data={props.route.params.items}
         style={{ flex: 1 }}
