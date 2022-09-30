@@ -57,7 +57,8 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
     sex: string,
     state: string,
     city: string,
-    district: string
+    district: string,
+    birthDate: string
   ) => {
     setIsLoading(true)
     await createUserWithEmailAndPassword(auth, email, password)
@@ -72,7 +73,8 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
           sex,
           state,
           city,
-          district
+          district,
+          birthDate
         }
         await insertUserIntoDatabase(user).then(async () => {
           setIsLoading(false)
