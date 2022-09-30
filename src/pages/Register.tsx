@@ -112,7 +112,7 @@ function ScreenRegister({ navigation }) {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <VStack flex={1} alignItems="center" bg="white" px={8} pt={24}>
+      <VStack flex={1} alignItems="center" bg="white" px={8}>
         <Modal
           size={'lg'}
           isOpen={showModalLocal}
@@ -281,52 +281,72 @@ function ScreenRegister({ navigation }) {
           </TouchableWithoutFeedback>
         </Modal>
 
-        <Image
-          source={require('../assets/logotipo2.png')}
-          resizeMode="contain"
-          width={'100%'}
-          height={'95'}
-          alt="OPMundi"
-        />
-        <Heading color="gray.300" fontSize="xl" mt={'2'}>
-          Crie sua conta
-        </Heading>
-        <Input
-          mt={3}
-          mb={4}
-          placeholder="E-mail"
-          InputLeftElement={
-            <Icon as={<Ionicons name={'mail'} color={colors.white} />} ml={4} />
-          }
-          onChangeText={setEmail}
-        />
-        <Input
-          mb={4}
-          placeholder="Senha"
-          InputLeftElement={
-            <Icon as={<Ionicons name={'key'} color={colors.white} />} ml={3} />
-          }
-          secureTextEntry={showPassword}
-          onChangeText={setPassword}
-        />
-        <Checkbox
-          value={showPassword.toString()}
-          onChange={() => setShowPassword(!showPassword)}
-          mb={3}
-          color="gray.300"
+        <ScrollView
+          flex={1}
+          w={'full'}
+          h={'full'}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
         >
-          Mostrar Senha
-        </Checkbox>
-        <Button
-          onPress={onClickRegister}
-          isLoading={isLoading}
-          title="Continuar"
-          w="100%"
-        />
+          <Image
+            source={require('../assets/logotipo2.png')}
+            resizeMode="contain"
+            width={'100%'}
+            height={'95'}
+            alt="OPMundi"
+          />
+          <Heading color="gray.300" fontSize="xl" mt={'2'}>
+            Crie sua conta
+          </Heading>
+          <Input
+            mt={3}
+            mb={4}
+            placeholder="E-mail"
+            InputLeftElement={
+              <Icon
+                as={<Ionicons name={'mail'} color={colors.white} />}
+                ml={4}
+              />
+            }
+            onChangeText={setEmail}
+          />
+          <Input
+            mb={4}
+            placeholder="Senha"
+            InputLeftElement={
+              <Icon
+                as={<Ionicons name={'key'} color={colors.white} />}
+                ml={3}
+              />
+            }
+            secureTextEntry={showPassword}
+            onChangeText={setPassword}
+          />
+          <Checkbox
+            value={showPassword.toString()}
+            onChange={() => setShowPassword(!showPassword)}
+            mb={3}
+            color="gray.300"
+          >
+            Mostrar Senha
+          </Checkbox>
+          <Button
+            onPress={onClickRegister}
+            isLoading={isLoading}
+            title="Continuar"
+            w="100%"
+          />
 
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-          <Text>Já possui uma conta? Clique aqui!</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Login')}
+            style={{ marginVertical: 8 }}
+          >
+            <Text>Já possui uma conta? Faça seu login!</Text>
+          </TouchableOpacity>
+        </ScrollView>
       </VStack>
     </TouchableWithoutFeedback>
   )
