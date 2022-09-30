@@ -9,20 +9,22 @@ import {
   Modal,
   Select,
   Checkbox,
-  Heading
+  Heading,
+  ScrollView
 } from 'native-base'
 import { Ionicons } from '@expo/vector-icons'
 import {
   Keyboard,
   ToastAndroid,
   TouchableOpacity,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  StyleSheet
 } from 'react-native'
 import { Login } from './Login'
 import { Input } from '../components/input'
 import { Button } from '../components/button'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-
+import { MaskedTextInput } from 'react-native-mask-text'
 const Stack = createNativeStackNavigator()
 
 function ScreenRegister({ navigation }) {
@@ -30,6 +32,7 @@ function ScreenRegister({ navigation }) {
   const [name, setName] = useState('')
   const [sex, setSex] = useState('')
   const [phone, setPhone] = useState('')
+  const [birthDate, setBirthDate] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [showModalLocal, setShowModalLocal] = useState(false)
   const [password, setPassword] = useState('')
@@ -58,7 +61,8 @@ function ScreenRegister({ navigation }) {
         sex,
         state,
         city,
-        district
+        district,
+        birthDate
       )
     }
   }
@@ -114,131 +118,167 @@ function ScreenRegister({ navigation }) {
           isOpen={showModalLocal}
           onClose={() => setShowModalLocal(false)}
         >
-          <Modal.Content padding="4">
-            <Modal.Header marginBottom={'4'}>
-              Última etapa do cadastro
-            </Modal.Header>
-            <Select
-              selectedValue={state}
-              bg="green.300"
-              mb="2"
-              fontSize="md"
-              fontFamily="body"
-              color="white"
-              onValueChange={itemValue => setState(itemValue)}
-              placeholder="Estado:"
-              placeholderTextColor={'#fff'}
-              height={'55'}
-            >
-              {listStates.map(a => (
-                <Select.Item
-                  key={a.id}
-                  label={`${a.sigla} - ${a.nome}`}
-                  value={a.sigla}
-                />
-              ))}
-            </Select>
-
-            <Select
-              selectedValue={city}
-              bg="green.300"
-              mb="2"
-              fontSize="md"
-              fontFamily="body"
-              onValueChange={itemValue => setCity(itemValue)}
-              placeholder="Cidade:"
-              placeholderTextColor={'#fff'}
-              height={'55'}
-              isDisabled={state === ''}
-            >
-              {listCities.map(b => (
-                <Select.Item key={b.id} label={b.nome} value={b.nome} />
-              ))}
-            </Select>
-            <Input
-              placeholder="Bairro"
-              height={'55'}
-              mb="2"
-              value={district}
-              onChangeText={setDistrict}
-              isDisabled={city === ''}
-            />
-            <Button
-              onPress={onRegisterFinal}
-              isLoading={isLoading}
-              title="Cadastrar"
-              isDisabled={state === '' && city === '' && district === ''}
-            />
-          </Modal.Content>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <Modal.Content padding="4">
+              <Modal.Header marginBottom={'4'}>
+                Última etapa do cadastro
+              </Modal.Header>
+              <Text>Estado:</Text>
+              <Select
+                selectedValue={state}
+                bg="green.300"
+                mb="2"
+                fontSize="md"
+                fontFamily="body"
+                color="white"
+                onValueChange={itemValue => setState(itemValue)}
+                placeholder="Estado:"
+                placeholderTextColor={'#fff'}
+                height={'55'}
+              >
+                {listStates.map(a => (
+                  <Select.Item
+                    key={a.id}
+                    label={`${a.sigla} - ${a.nome}`}
+                    value={a.sigla}
+                  />
+                ))}
+              </Select>
+              <Text>Cidade:</Text>
+              <Select
+                selectedValue={city}
+                bg="green.300"
+                mb="2"
+                fontSize="md"
+                color="white"
+                fontFamily="body"
+                onValueChange={itemValue => setCity(itemValue)}
+                placeholder="Cidade:"
+                placeholderTextColor={'#fff'}
+                height={'55'}
+                isDisabled={state === ''}
+              >
+                {listCities.map(b => (
+                  <Select.Item key={b.id} label={b.nome} value={b.nome} />
+                ))}
+              </Select>
+              <Text>Bairro:</Text>
+              <Input
+                placeholder="Bairro"
+                height={'55'}
+                mb="2"
+                value={district}
+                onChangeText={setDistrict}
+                isDisabled={city === ''}
+              />
+              <Button
+                onPress={onRegisterFinal}
+                isLoading={isLoading}
+                title="Cadastrar"
+                isDisabled={state === '' && city === '' && district === ''}
+              />
+            </Modal.Content>
+          </TouchableWithoutFeedback>
         </Modal>
         <Modal
           size={'lg'}
           isOpen={showModal}
           onClose={() => setShowModal(false)}
         >
-          <Modal.Content padding={'4'}>
-            <Modal.Header>Complete seu cadastro</Modal.Header>
-            <Input
-              mt={2}
-              mb={2}
-              placeholder="Nome Completo:"
-              InputLeftElement={
-                <Icon
-                  as={<Ionicons name={'person-outline'} color={colors.white} />}
-                  ml={4}
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <Modal.Content padding={'4'}>
+              <ScrollView>
+                <Modal.Header>Complete seu cadastro</Modal.Header>
+                <Text>Nome Completo:</Text>
+                <Input
+                  mt={2}
+                  mb={2}
+                  placeholder="Nome Completo:"
+                  InputLeftElement={
+                    <Icon
+                      as={
+                        <Ionicons
+                          name={'person-outline'}
+                          color={colors.white}
+                        />
+                      }
+                      ml={4}
+                    />
+                  }
+                  onChangeText={setName}
                 />
-              }
-              onChangeText={setName}
-            />
-            <Input
-              mb={2}
-              dataDetectorTypes="phoneNumber"
-              keyboardType="phone-pad"
-              placeholder="Telefone: (xx) xxxxx-xxxx"
-              InputLeftElement={
-                <Icon
-                  as={<Ionicons name={'call-outline'} color={colors.white} />}
-                  ml={4}
+                <Text>Telefone:</Text>
+                <Input
+                  mb={2}
+                  dataDetectorTypes="phoneNumber"
+                  keyboardType="phone-pad"
+                  placeholder="Telefone: (xx) xxxxx-xxxx"
+                  InputLeftElement={
+                    <Icon
+                      as={
+                        <Ionicons name={'call-outline'} color={colors.white} />
+                      }
+                      ml={4}
+                    />
+                  }
+                  onChangeText={setPhone}
                 />
-              }
-              onChangeText={setPhone}
-            />
-            <Select
-              placeholder="Gênero"
-              placeholderTextColor={'#fff'}
-              selectedValue={sex}
-              height="55"
-              bg="green.300"
-              mb="2"
-              fontSize="md"
-              fontFamily="body"
-              width={'100%'}
-              backgroundColor="#04D361"
-              onValueChange={itemValue => setSex(itemValue)}
-            >
-              <Select.Item label="Masculino" value="Masculino" />
-              <Select.Item label="Feminino" value="Feminino" />
-              <Select.Item
-                label="Prefiro não dizer"
-                value="Prefiro não dizer"
-              />
-            </Select>
-            <Button
-              onPress={() => {
-                if (sex === '' || phone === '' || name === '') {
-                  ToastAndroid.show(
-                    'Verifique se todos os campos foram preenchidos.',
-                    ToastAndroid.LONG
-                  )
-                } else {
-                  setShowModalLocal(true)
-                  setShowModal(false)
-                }
-              }}
-              mt="4"
-              title="Prosseguir"
-            />
-          </Modal.Content>
+                <Text>Data de Nascimento:</Text>
+                <MaskedTextInput
+                  style={styles.input}
+                  placeholder={'dd/mm/aaaa'}
+                  placeholderTextColor={'#fff'}
+                  mask="99/99/9999"
+                  onChangeText={text => {
+                    setBirthDate(text)
+                  }}
+                  keyboardType="numeric"
+                />
+                <Text>Gênero:</Text>
+                <Select
+                  placeholder="Gênero"
+                  placeholderTextColor={'#fff'}
+                  color={'#fff'}
+                  selectedValue={sex}
+                  height="55"
+                  bg="green.300"
+                  mb="2"
+                  fontSize="md"
+                  fontFamily="body"
+                  width={'100%'}
+                  backgroundColor="#04D361"
+                  onValueChange={itemValue => setSex(itemValue)}
+                >
+                  <Select.Item label="Masculino" value="Masculino" />
+                  <Select.Item label="Feminino" value="Feminino" />
+                  <Select.Item
+                    label="Prefiro não dizer"
+                    value="Prefiro não dizer"
+                  />
+                </Select>
+                <Button
+                  onPress={() => {
+                    if (
+                      sex === '' ||
+                      phone === '' ||
+                      name === '' ||
+                      birthDate === ''
+                    ) {
+                      ToastAndroid.show(
+                        'Verifique se todos os campos foram preenchidos.',
+                        ToastAndroid.LONG
+                      )
+                    } else {
+                      setShowModalLocal(true)
+                      setShowModal(false)
+                    }
+                  }}
+                  mt="4"
+                  title="Prosseguir"
+                />
+              </ScrollView>
+            </Modal.Content>
+          </TouchableWithoutFeedback>
         </Modal>
 
         <Image
@@ -300,3 +340,15 @@ export function Register() {
     </Stack.Navigator>
   )
 }
+const styles = StyleSheet.create({
+  input: {
+    color: '#fff',
+    fontSize: 16,
+    height: 45,
+    borderWidth: 0,
+    borderRadius: 5,
+    backgroundColor: '#04D361',
+    paddingHorizontal: 12,
+    marginBottom: 8
+  }
+})
