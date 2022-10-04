@@ -53,7 +53,7 @@ export function Login() {
             resizeMode="contain"
             width={100}
             height={100}
-            alt={'OPMundi'}
+            alt={'Opmundi'}
           />
           <Heading color="gray.300" fontSize="xl" mt={6} mb={6}>
             Acesse sua conta

@@ -1,10 +1,8 @@
 {
   "expo": {
-    "name": "OPMundi",
-    "slug": "OPMundi",
+    "name": "Opmundi",
+    "slug": "Opmundi",
     "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
+    "assetBundlePatterns": ["**/*"]
   }
 }
