@@ -59,3 +59,6 @@ dist/
 .env.local
 .env.development
 .env.production
+
+# Thumbs.db files
+Thumbs.db
