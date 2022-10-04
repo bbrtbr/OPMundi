@@ -36,6 +36,7 @@ function ScreenRegister({ navigation }) {
   const [showModal, setShowModal] = useState(false)
   const [showModalLocal, setShowModalLocal] = useState(false)
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [district, setDistrict] = useState('')
   const [showPassword, setShowPassword] = useState(true)
   const [state, setState] = useState('')
@@ -100,13 +101,20 @@ function ScreenRegister({ navigation }) {
   }, [state])
 
   async function onClickRegister() {
-    if (email === '' || password === '') {
+    if (email === '' || password === '' || confirmPassword === '') {
       ToastAndroid.show(
         'Verifique se todos os campos foram preenchidos.',
         ToastAndroid.LONG
       )
     } else {
-      setShowModal(true)
+      if (password !== confirmPassword) {
+        ToastAndroid.show(
+          'As senhas são diferentes. Por favor, verifique-as.',
+          ToastAndroid.LONG
+        )
+      } else {
+        setShowModal(true)
+      }
     }
   }
 
@@ -324,6 +332,18 @@ function ScreenRegister({ navigation }) {
             }
             secureTextEntry={showPassword}
             onChangeText={setPassword}
+          />
+          <Input
+            mb={4}
+            placeholder="Confirmar senha"
+            InputLeftElement={
+              <Icon
+                as={<Ionicons name={'key'} color={colors.white} />}
+                ml={3}
+              />
+            }
+            secureTextEntry={showPassword}
+            onChangeText={setConfirmPassword}
           />
           <Checkbox
             value={showPassword.toString()}
