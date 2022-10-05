@@ -17,6 +17,7 @@ import type { User } from '../models/user'
 import { getFormsFromDatabase } from '../database/form'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { FormPage } from './FormPage'
+import { useIsFocused } from '@react-navigation/native'
 
 const Stack = createNativeStackNavigator()
 
@@ -24,6 +25,7 @@ function Dash({ navigation }) {
   const { user }: { user: User } = useContext(UserContext)
   const [forms, setForms] = useState<Form[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+  const isFocused = useIsFocused()
 
   const navigateToFormPage = () => (form: Form) => () => {
     navigation.navigate('FormPage', {
@@ -42,7 +44,8 @@ function Dash({ navigation }) {
 
   useEffect(() => {
     getForms()
-  }, [])
+    isFocused && getForms()
+  }, [isFocused])
 
   const formsToBeAnswered = forms.filter(form => {
     const answers = form.answers
