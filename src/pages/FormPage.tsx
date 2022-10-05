@@ -68,7 +68,6 @@ export function FormPage(props) {
                 size={54}
                 width={109}
                 height={109}
-                alt={'Teste'}
               />
             )
           ) : (
@@ -87,6 +86,12 @@ export function FormPage(props) {
           )}
         </Center>
       </HStack>
+      <Button
+        onPress={sendAnswerToDatabase}
+        title="Enviar"
+        width={'100%'}
+        isDisabled={selectedItem === null}
+      />
       <FlatList
         data={props.route.params.items}
         style={{ flex: 1 }}
@@ -137,14 +142,6 @@ export function FormPage(props) {
           </TouchableOpacity>
         )}
       />
-      <VStack alignItems="center">
-        <Button
-          onPress={sendAnswerToDatabase}
-          title="Enviar"
-          width={'100%'}
-          isDisabled={selectedItem === null}
-        />
-      </VStack>
     </VStack>
   )
 }

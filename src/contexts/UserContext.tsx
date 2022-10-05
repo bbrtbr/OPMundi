@@ -7,7 +7,8 @@ import { auth } from '../utils/firebase'
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  sendEmailVerification
 } from 'firebase/auth'
 
 export const UserContext = createContext(null)
@@ -27,11 +28,18 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
     await signInWithEmailAndPassword(auth, email, password)
       .then(async userCredential => {
         const userFromAuthCredential = userCredential.user
-        const { uid } = userFromAuthCredential
-        const user: User = await getUserFromDatabase(uid)
-        ToastAndroid.show('Login realizado com sucesso', ToastAndroid.SHORT)
-        AsyncStorage.setItem('@user', JSON.stringify(user))
-        setUser(user)
+        if (userCredential.user.emailVerified === true) {
+          const { uid } = userFromAuthCredential
+          const user: User = await getUserFromDatabase(uid)
+          ToastAndroid.show('Login realizado com sucesso', ToastAndroid.SHORT)
+          AsyncStorage.setItem('@user', JSON.stringify(user))
+          setUser(user)
+        } else {
+          ToastAndroid.show(
+            'Verifique seu email na sua caixa de entrada/spam.',
+            ToastAndroid.SHORT
+          )
+        }
       })
       .catch(error => {
         if (error.code === 'auth/user-not-found') {
@@ -65,6 +73,7 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
       .then(async userCredential => {
         const userFromAuthCredential = userCredential.user
         const { uid } = userFromAuthCredential
+        await sendEmailVerification(userCredential.user)
         const user: User = {
           uid,
           email,
@@ -78,9 +87,11 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
         }
         await insertUserIntoDatabase(user).then(async () => {
           setIsLoading(false)
-          await AsyncStorage.setItem('@user', JSON.stringify(user))
-          setUser(user)
-          ToastAndroid.show('Registrado com sucesso', ToastAndroid.SHORT)
+
+          ToastAndroid.show(
+            'Registrado!, confirme seu email na sua caixa de entrada/spam.',
+            ToastAndroid.SHORT
+          )
         })
       })
       .catch(error => {
