@@ -68,15 +68,31 @@ export function FormPage(props) {
             p={1}
             mr={4}
             borderRadius={'full'}
-            width={63}
-            height={63}
-          />
+            width={79}
+            height={79}
+          >
+            {selectedItem?.imageUrl && (
+              <Image
+                src={selectedItem.imageUrl}
+                resizeMode={'cover'}
+                borderRadius={'full'}
+                size={70}
+                alt={selectedItem.itemText}
+              />
+            )}
+          </Center>
         </Center>
       </HStack>
+      <Button
+        onPress={sendAnswerToDatabase}
+        title="Enviar"
+        width={'100%'}
+        isDisabled={selectedItem === null}
+        mb={2}
+      />
       <FlatList
         data={props.route.params.items}
         style={{ flex: 1 }}
-        marginBottom={4}
         keyExtractor={(item: QuestionItem) => item.backgroundColor}
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -102,15 +118,15 @@ export function FormPage(props) {
                   p={1}
                   mr={4}
                   borderRadius={'full'}
-                  width={63}
-                  height={63}
+                  width={79}
+                  height={79}
                 >
                   {item.imageUrl && (
                     <Image
                       src={item.imageUrl}
-                      resizeMode={'contain'}
+                      resizeMode={'cover'}
                       borderRadius={'full'}
-                      size={54}
+                      size={70}
                       alt={item.itemText}
                     />
                   )}
@@ -123,14 +139,6 @@ export function FormPage(props) {
           </TouchableOpacity>
         )}
       />
-      <VStack alignItems="center">
-        <Button
-          onPress={sendAnswerToDatabase}
-          title="Enviar"
-          width={'100%'}
-          isDisabled={selectedItem === null}
-        />
-      </VStack>
     </VStack>
   )
 }
