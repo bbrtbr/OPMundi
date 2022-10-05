@@ -59,21 +59,34 @@ export function FormPage(props) {
         my={2}
       >
         <Center>
-          <Center
-            backgroundColor={
-              selectedItem?.backgroundColor != null
-                ? selectedItem.backgroundColor
-                : '#a2a2a2'
-            }
-            p={1}
-            mr={4}
-            borderRadius={'full'}
-            width={63}
-            height={63}
-          ></Center>
+          {selectedItem?.imageUrl ? (
+            selectedItem?.imageUrl && (
+              <Image
+                src={selectedItem?.imageUrl}
+                resizeMode={'contain'}
+                borderRadius={'full'}
+                size={54}
+                width={109}
+                height={109}
+                alt={'Teste'}
+              />
+            )
+          ) : (
+            <Center
+              backgroundColor={
+                selectedItem?.backgroundColor != null
+                  ? selectedItem.backgroundColor
+                  : '#a2a2a2'
+              }
+              p={1}
+              mr={4}
+              borderRadius={'full'}
+              width={109}
+              height={109}
+            />
+          )}
         </Center>
       </HStack>
-
       <FlatList
         data={props.route.params.items}
         style={{ flex: 1 }}

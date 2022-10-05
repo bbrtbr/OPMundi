@@ -7,5 +7,6 @@ export interface User {
   state: string
   city: string
   district: string
+  birthDate: string
   answeredForms?: string[]
 }
