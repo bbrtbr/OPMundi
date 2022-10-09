@@ -64,10 +64,10 @@ export function FormPage(props) {
               <Image
                 src={selectedItem?.imageUrl}
                 resizeMode={'contain'}
-                borderRadius={'full'}
+                borderRadius={5}
                 size={54}
-                width={109}
-                height={109}
+                height={120}
+                width={160}
               />
             )
           ) : (
@@ -79,9 +79,9 @@ export function FormPage(props) {
               }
               p={1}
               mr={4}
-              borderRadius={'full'}
-              width={109}
-              height={109}
+              borderRadius={5}
+              height={120}
+              width={160}
             />
           )}
         </Center>
@@ -120,16 +120,16 @@ export function FormPage(props) {
                   backgroundColor={item.backgroundColor}
                   p={1}
                   mr={4}
-                  borderRadius={'full'}
-                  width={63}
-                  height={63}
+                  borderRadius={5}
+                  height={61}
+                  width={81}
                 >
                   {item.imageUrl && (
                     <Image
                       src={item.imageUrl}
                       resizeMode={'contain'}
-                      borderRadius={'full'}
-                      size={54}
+                      borderRadius={5}
+                      size={'full'}
                       alt={item.itemText}
                     />
                   )}

@@ -10,7 +10,8 @@ import {
   Select,
   Checkbox,
   Heading,
-  ScrollView
+  ScrollView,
+  Divider
 } from 'native-base'
 import { Ionicons } from '@expo/vector-icons'
 import {
@@ -121,6 +122,89 @@ function ScreenRegister({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <VStack flex={1} alignItems="center" bg="white" px={8}>
+        <ScrollView
+          flex={1}
+          w={'full'}
+          h={'full'}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <Image
+            source={require('../assets/opvestabanner.png')}
+            width={'100%'}
+            height={'90'}
+            resizeMode="contain"
+            alt="Opmundi"
+          />
+
+          <Heading color="#004987" fontSize="xl" mt={'2'}>
+            Crie sua conta
+          </Heading>
+          <Input
+            mt={3}
+            mb={4}
+            placeholder="E-mail"
+            InputLeftElement={
+              <Icon
+                as={<Ionicons name={'mail'} color={colors.white} />}
+                ml={4}
+              />
+            }
+            onChangeText={setEmail}
+          />
+          <Input
+            mb={4}
+            placeholder="Senha"
+            InputLeftElement={
+              <Icon
+                as={<Ionicons name={'key'} color={colors.white} />}
+                ml={3}
+              />
+            }
+            secureTextEntry={showPassword}
+            onChangeText={setPassword}
+          />
+          <Input
+            mb={4}
+            placeholder="Confirmar senha"
+            InputLeftElement={
+              <Icon
+                as={<Ionicons name={'key'} color={colors.white} />}
+                ml={3}
+              />
+            }
+            secureTextEntry={showPassword}
+            onChangeText={setConfirmPassword}
+          />
+          <Checkbox
+            value={showPassword.toString()}
+            onChange={() => setShowPassword(!showPassword)}
+            mb={3}
+            bgColor="#004987"
+            color="#004987"
+          >
+            Mostrar Senha
+          </Checkbox>
+          <Button
+            onPress={onClickRegister}
+            isLoading={isLoading}
+            title="Continuar"
+            w="100%"
+          />
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Login')}
+            style={{ marginVertical: 8 }}
+          >
+            <Divider my={2} />
+            <Text color="#004987" fontSize="xl">
+              Fazer login
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
         <Modal
           size={'lg'}
           isOpen={showModalLocal}
@@ -134,14 +218,15 @@ function ScreenRegister({ navigation }) {
               <Text>Estado:</Text>
               <Select
                 selectedValue={state}
-                bg="green.300"
+                bg="white"
                 mb="2"
                 fontSize="md"
                 fontFamily="body"
-                color="white"
+                borderColor={'#00B37E'}
+                color="#004987"
                 onValueChange={itemValue => setState(itemValue)}
                 placeholder="Estado:"
-                placeholderTextColor={'#fff'}
+                placeholderTextColor={'#004987'}
                 height={'55'}
               >
                 {listStates.map(a => (
@@ -155,14 +240,15 @@ function ScreenRegister({ navigation }) {
               <Text>Cidade:</Text>
               <Select
                 selectedValue={city}
-                bg="green.300"
+                bg="white"
                 mb="2"
+                borderColor={'#00B37E'}
                 fontSize="md"
-                color="white"
+                color="#004987"
                 fontFamily="body"
                 onValueChange={itemValue => setCity(itemValue)}
                 placeholder="Cidade:"
-                placeholderTextColor={'#fff'}
+                placeholderTextColor={'#004987'}
                 height={'55'}
                 isDisabled={state === ''}
               >
@@ -235,7 +321,7 @@ function ScreenRegister({ navigation }) {
                 <MaskedTextInput
                   style={styles.input}
                   placeholder={'dd/mm/aaaa'}
-                  placeholderTextColor={'#fff'}
+                  placeholderTextColor={'#004987'}
                   mask="99/99/9999"
                   onChangeText={text => {
                     setBirthDate(text)
@@ -245,24 +331,23 @@ function ScreenRegister({ navigation }) {
                 <Text>Gênero:</Text>
                 <Select
                   placeholder="Gênero"
-                  placeholderTextColor={'#fff'}
-                  color={'#fff'}
+                  placeholderTextColor={'#004987'}
+                  color={'#004987'}
                   selectedValue={sex}
                   height="55"
-                  bg="green.300"
                   mb="2"
                   fontSize="md"
                   fontFamily="body"
                   width={'100%'}
-                  backgroundColor="#04D361"
+                  backgroundColor="white"
                   onValueChange={itemValue => setSex(itemValue)}
                 >
                   <Select.Item label="Masculino" value="Masculino" />
                   <Select.Item label="Feminino" value="Feminino" />
-                  <Select.Item
-                    label="Prefiro não dizer"
-                    value="Prefiro não dizer"
-                  />
+                  <Select.Item label="Homossexual" value="Homossexual" />
+                  <Select.Item label="Bissexual" value="Bissexual" />
+                  <Select.Item label="Assexual" value="Assexual" />
+                  <Select.Item label="Outros" value="Outros" />
                 </Select>
                 <Button
                   onPress={() => {
@@ -288,85 +373,6 @@ function ScreenRegister({ navigation }) {
             </Modal.Content>
           </TouchableWithoutFeedback>
         </Modal>
-
-        <ScrollView
-          flex={1}
-          w={'full'}
-          h={'full'}
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          <Image
-            source={require('../assets/logotipo2.png')}
-            resizeMode="contain"
-            width={'100%'}
-            height={'95'}
-            alt="Opmundi"
-          />
-          <Heading color="gray.300" fontSize="xl" mt={'2'}>
-            Crie sua conta
-          </Heading>
-          <Input
-            mt={3}
-            mb={4}
-            placeholder="E-mail"
-            InputLeftElement={
-              <Icon
-                as={<Ionicons name={'mail'} color={colors.white} />}
-                ml={4}
-              />
-            }
-            onChangeText={setEmail}
-          />
-          <Input
-            mb={4}
-            placeholder="Senha"
-            InputLeftElement={
-              <Icon
-                as={<Ionicons name={'key'} color={colors.white} />}
-                ml={3}
-              />
-            }
-            secureTextEntry={showPassword}
-            onChangeText={setPassword}
-          />
-          <Input
-            mb={4}
-            placeholder="Confirmar senha"
-            InputLeftElement={
-              <Icon
-                as={<Ionicons name={'key'} color={colors.white} />}
-                ml={3}
-              />
-            }
-            secureTextEntry={showPassword}
-            onChangeText={setConfirmPassword}
-          />
-          <Checkbox
-            value={showPassword.toString()}
-            onChange={() => setShowPassword(!showPassword)}
-            mb={3}
-            color="gray.300"
-          >
-            Mostrar Senha
-          </Checkbox>
-          <Button
-            onPress={onClickRegister}
-            isLoading={isLoading}
-            title="Continuar"
-            w="100%"
-          />
-
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Login')}
-            style={{ marginVertical: 8 }}
-          >
-            <Text>Já possui uma conta? Faça seu login!</Text>
-          </TouchableOpacity>
-        </ScrollView>
       </VStack>
     </TouchableWithoutFeedback>
   )
@@ -382,12 +388,13 @@ export function Register() {
 }
 const styles = StyleSheet.create({
   input: {
-    color: '#fff',
+    color: '#004987',
     fontSize: 16,
+    borderColor: '#00B37E',
     height: 45,
-    borderWidth: 0,
+    borderWidth: 1,
     borderRadius: 5,
-    backgroundColor: '#04D361',
+    backgroundColor: 'white',
     paddingHorizontal: 12,
     marginBottom: 8
   }
