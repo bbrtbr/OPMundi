@@ -5,6 +5,14 @@
     "version": "1.3.0",
     "assetBundlePatterns": ["**/*"],
     "orientation": "portrait",
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O aplicativo poderá solicitar alguma foto da sua galeria."
+        }
+      ]
+    ],
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
