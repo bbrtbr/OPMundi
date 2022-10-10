@@ -59,28 +59,32 @@ export function FormPage(props) {
         my={2}
       >
         <Center>
-          <Center
-            backgroundColor={
-              selectedItem?.backgroundColor != null
-                ? selectedItem.backgroundColor
-                : '#a2a2a2'
-            }
-            p={1}
-            mr={4}
-            borderRadius={'full'}
-            width={79}
-            height={79}
-          >
-            {selectedItem?.imageUrl && (
+          {selectedItem?.imageUrl ? (
+            selectedItem?.imageUrl && (
               <Image
-                src={selectedItem.imageUrl}
-                resizeMode={'cover'}
-                borderRadius={'full'}
-                size={70}
+                src={selectedItem?.imageUrl}
+                resizeMode={'contain'}
+                borderRadius={5}
+                size={54}
+                height={120}
+                width={160}
                 alt={selectedItem.itemText}
               />
-            )}
-          </Center>
+            )
+          ) : (
+            <Center
+              backgroundColor={
+                selectedItem?.backgroundColor != null
+                  ? selectedItem.backgroundColor
+                  : '#a2a2a2'
+              }
+              p={1}
+              mr={4}
+              borderRadius={5}
+              height={120}
+              width={160}
+            />
+          )}
         </Center>
       </HStack>
       <Button
@@ -88,11 +92,11 @@ export function FormPage(props) {
         title="Enviar"
         width={'100%'}
         isDisabled={selectedItem === null}
-        mb={2}
       />
       <FlatList
         data={props.route.params.items}
         style={{ flex: 1 }}
+        marginBottom={4}
         keyExtractor={(item: QuestionItem) => item.backgroundColor}
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -117,16 +121,16 @@ export function FormPage(props) {
                   backgroundColor={item.backgroundColor}
                   p={1}
                   mr={4}
-                  borderRadius={'full'}
-                  width={79}
-                  height={79}
+                  borderRadius={5}
+                  height={61}
+                  width={81}
                 >
                   {item.imageUrl && (
                     <Image
                       src={item.imageUrl}
-                      resizeMode={'cover'}
-                      borderRadius={'full'}
-                      size={70}
+                      resizeMode={'contain'}
+                      borderRadius={5}
+                      size={'full'}
                       alt={item.itemText}
                     />
                   )}
