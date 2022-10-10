@@ -49,7 +49,7 @@ export function Login() {
           }}
         >
           <Image
-            source={require('../assets/logotipo.png')}
+            source={require('../assets/logo.png')}
             resizeMode="contain"
             width={100}
             height={100}
@@ -88,7 +88,8 @@ export function Login() {
             value={'Mostrar Senha'}
             onChange={() => setShowPassword(!showPassword)}
             mb={3}
-            color="gray.300"
+            bgColor="#004987"
+            color="#004987"
           >
             Mostrar Senha
           </Checkbox>
