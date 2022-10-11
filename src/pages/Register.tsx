@@ -137,7 +137,7 @@ function ScreenRegister({ navigation }) {
             width={'100%'}
             height={'90'}
             resizeMode="contain"
-            alt="Opmundi"
+            alt="OpVesta"
           />
 
           <Heading color="#004987" fontSize="xl" mt={'2'}>
