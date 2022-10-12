@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { UserContext } from '../contexts/UserContext'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ToastAndroid, TouchableOpacity } from 'react-native'
 import {
   VStack,
@@ -22,14 +23,15 @@ export function FormPage(props) {
   const [selectedItem, setSelectedItem] = useState<QuestionItem | null>(null)
   const { user }: { user: User } = useContext(UserContext)
 
-  function ShareAns() {
-    props.navigation.navigate('ShareAnswer', {
-      backgroundColor: selectedItem.backgroundColor,
-      itemText: selectedItem.itemText,
-      name: user.name,
-      imageUrl: selectedItem.imageUrl,
-      questione: props.route.params.question
-    })
+  async function ShareAns() {
+    await AsyncStorage.setItem('@question', props.route.params.question)
+    await AsyncStorage.setItem('@answer', selectedItem.itemText)
+    await AsyncStorage.setItem('@backgroundColor', selectedItem.backgroundColor)
+    await AsyncStorage.setItem(
+      '@imageUrl',
+      selectedItem.imageUrl ? selectedItem.imageUrl : 'null'
+    )
+    props.navigation.navigate('ShareAnswer')
   }
   async function sendAnswerToDatabase() {
     const currentDate: Date = new Date()
