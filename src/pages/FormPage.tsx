@@ -22,6 +22,15 @@ export function FormPage(props) {
   const [selectedItem, setSelectedItem] = useState<QuestionItem | null>(null)
   const { user }: { user: User } = useContext(UserContext)
 
+  function ShareAns() {
+    props.navigation.navigate('ShareAnswer', {
+      backgroundColor: selectedItem.backgroundColor,
+      itemText: selectedItem.itemText,
+      name: user.name,
+      imageUrl: selectedItem.imageUrl,
+      questione: props.route.params.question
+    })
+  }
   async function sendAnswerToDatabase() {
     const currentDate: Date = new Date()
     const answer: Answer = {
@@ -86,12 +95,21 @@ export function FormPage(props) {
           )}
         </Center>
       </HStack>
-      <Button
-        onPress={sendAnswerToDatabase}
-        title="Enviar"
-        width={'100%'}
-        isDisabled={selectedItem === null}
-      />
+      <VStack mt="3" flexDirection={'row'}>
+        <Button
+          onPress={sendAnswerToDatabase}
+          title="Enviar"
+          width={'50%'}
+          mr="1"
+          isDisabled={selectedItem === null}
+        />
+        <Button
+          onPress={ShareAns}
+          title="Espalhar"
+          width={'50%'}
+          isDisabled={selectedItem === null}
+        />
+      </VStack>
       <FlatList
         data={props.route.params.items}
         style={{ flex: 1 }}
