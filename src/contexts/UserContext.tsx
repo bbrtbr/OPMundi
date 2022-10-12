@@ -2,13 +2,19 @@ import React, { FC, createContext, ReactNode, useState, useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ToastAndroid } from 'react-native'
 import type { User } from '../models/user'
-import { getUserFromDatabase, insertUserIntoDatabase } from '../database/user'
+import {
+  getUserFromDatabase,
+  insertUserIntoDatabase,
+  RemoveUserIntoDatabase
+} from '../database/user'
 import { auth } from '../utils/firebase'
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
-  sendEmailVerification
+  sendEmailVerification,
+  deleteUser,
+  reauthenticateWithCredential
 } from 'firebase/auth'
 
 export const UserContext = createContext(null)
@@ -35,8 +41,9 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
           AsyncStorage.setItem('@user', JSON.stringify(user))
           setUser(user)
         } else {
+          await sendEmailVerification(userCredential.user)
           ToastAndroid.show(
-            'Verifique seu email na sua caixa de entrada/spam.',
+            'Email não validado, verifique seu email na sua caixa de entrada/spam.',
             ToastAndroid.SHORT
           )
         }
@@ -116,7 +123,28 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
     await AsyncStorage.removeItem('@user')
     setUser(null)
   }
+  const deleteAccount = async () => {
+    const user = auth.currentUser
+    const idbackup = user.uid
 
+    await deleteUser(user)
+      .then(async () => {
+        RemoveUserIntoDatabase(idbackup)
+        ToastAndroid.show('Conta excluida', ToastAndroid.LONG)
+        await auth.signOut()
+        await AsyncStorage.removeItem('@user')
+        setUser(null)
+      })
+      .catch(error => {
+        if (error.code === 'auth/requires-recent-login') {
+          ToastAndroid.show(
+            'Você precisa fazer login novamente para excluir a sua conta.',
+            ToastAndroid.LONG
+          )
+          signOut()
+        }
+      })
+  }
   const resetPass = async email => {
     await sendPasswordResetEmail(auth, email)
       .then(() => {
@@ -151,10 +179,14 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({
         signIn,
         signOut,
         isLoading,
-        resetPass
+        resetPass,
+        deleteAccount
       }}
     >
       {children}
     </UserContext.Provider>
   )
+}
+function promptForCredentials() {
+  throw new Error('Function not implemented.')
 }

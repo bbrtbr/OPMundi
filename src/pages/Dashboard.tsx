@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
+
 import { UserContext } from '../contexts/UserContext'
 import {
   VStack,
@@ -18,6 +19,7 @@ import { getFormsFromDatabase } from '../database/form'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { FormPage } from './FormPage'
 import { useIsFocused } from '@react-navigation/native'
+import { ShareAnswer } from './ShareAnswer'
 
 const Stack = createNativeStackNavigator()
 
@@ -124,16 +126,15 @@ function Dash({ navigation }) {
                     backgroundColor={item.answers[user.uid].backgroundColor}
                     p={1}
                     mr={2}
-                    borderRadius={'full'}
-                    width={10}
-                    height={10}
+                    width={8}
+                    height={5}
                   >
                     {item.answers[user.uid].imageUrl && (
                       <Image
                         src={item.answers[user.uid].imageUrl}
                         resizeMode={'contain'}
-                        borderRadius={'full'}
-                        size={8}
+                        width={8}
+                        height={5}
                         alt={item.answers[user.uid].itemText}
                       />
                     )}
@@ -156,6 +157,7 @@ export function Dashboard() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Dashboard" component={Dash} />
       <Stack.Screen name="FormPage" component={FormPage} />
+      <Stack.Screen name="ShareAnswer" component={ShareAnswer} />
     </Stack.Navigator>
   )
 }

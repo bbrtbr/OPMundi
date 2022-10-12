@@ -2,43 +2,37 @@ import React, { useContext, useState, useEffect } from 'react'
 
 import {
   ToastAndroid,
-  TouchableHighlight,
   StyleSheet,
   Image,
   TouchableOpacity,
-  View
+  TouchableWithoutFeedback
 } from 'react-native'
-import { VStack, Heading, Text, Divider, ScrollView } from 'native-base'
+import { VStack, Text, Divider, ScrollView, Modal } from 'native-base'
 import { useIsFocused } from '@react-navigation/native'
 import * as ImagePicker from 'expo-image-picker'
 import { UserContext } from '../contexts/UserContext'
-import {
-  AdMobBanner,
-  AdMobInterstitial,
-  AdMobRewarded,
-  PublisherBanner
-} from 'expo-ads-admob'
 import type { User } from '../models/user'
-import { ref, set, update, getDatabase } from 'firebase/database'
+import { ref, update, getDatabase } from 'firebase/database'
 import { Button } from '../components/button'
-import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator'
-import {
-  ref as refs,
-  uploadBytes,
-  getDownloadURL,
-  listAll,
-  deleteObject
-} from 'firebase/storage'
+
+import { ref as refs, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { Input } from '../components/input'
 import { defaultStorage as storage } from '../utils/firebase'
 export function Profile() {
   const { user }: { user: User } = useContext(UserContext)
-  const { signOut } = useContext(UserContext)
+  const { deleteAccount } = useContext(UserContext)
+
   const [editT, setEditT] = useState(false)
   const [newName, setNewName] = useState(user.name)
   const [newPhone, setNewPhone] = useState(user.phone)
   const [urlImage, setUrlImage] = useState(null)
+  const [urlImageAds, setUrlImageAds] = useState(null)
+  const [showModalLocal, setShowModalLocal] = useState(false)
   const isFocused = useIsFocused()
+  async function returnAds() {
+    const imageAds = refs(storage, 'stateannounc/' + user.state + '.png')
+    setUrlImageAds(await getDownloadURL(imageAds))
+  }
   function updateName() {
     const db = getDatabase()
     update(ref(db, 'users/' + user.uid), {
@@ -53,7 +47,7 @@ export function Profile() {
     setUrlImage(await getDownloadURL(imageRef))
   }
   useEffect(() => {
-    isFocused && returnImage()
+    isFocused && returnImage() && returnAds()
   }, [isFocused])
   async function uploadImage() {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -154,7 +148,52 @@ export function Profile() {
               ></Button>
             ) : null}
           </VStack>
+          {editT ? (
+            <Button
+              mt={'2'}
+              width={'50%'}
+              title="Excluir Conta"
+              onPress={() => setShowModalLocal(true)}
+            ></Button>
+          ) : null}
         </VStack>
+        <VStack style={styles.containerAds}>
+          <Divider my="3"></Divider>
+          <Image
+            style={styles.adsBanner}
+            resizeMode="contain"
+            source={{
+              uri: urlImageAds || null
+            }}
+          />
+        </VStack>
+        <Modal
+          size={'lg'}
+          isOpen={showModalLocal}
+          onClose={() => setShowModalLocal(false)}
+        >
+          <Modal.Content padding="4">
+            <Modal.Header marginBottom={'4'}>
+              Deseja excluir a sua conta?
+            </Modal.Header>
+            <VStack mt="3" flexDirection={'row'}>
+              <Button
+                width={'50%'}
+                mr="2"
+                title="Sim"
+                onPress={deleteAccount}
+              />
+
+              {editT ? (
+                <Button
+                  width={'50%'}
+                  title="Não"
+                  onPress={() => setShowModalLocal(false)}
+                ></Button>
+              ) : null}
+            </VStack>
+          </Modal.Content>
+        </Modal>
       </VStack>
     </ScrollView>
   )
@@ -194,7 +233,19 @@ const styles = StyleSheet.create({
     margin: 10,
     fontSize: 20
   },
-  example: {
-    paddingVertical: 10
+  adsBanner: {
+    paddingVertical: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    borderWidth: 1,
+    borderColor: 'black'
+  },
+  containerAds: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: 1
   }
 })
