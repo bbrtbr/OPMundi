@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { UserContext } from '../contexts/UserContext'
-import { captureRef } from 'react-native-view-shot'
+import ViewShot from 'react-native-view-shot'
 import * as Sharing from 'expo-sharing'
 import {
   VStack,
@@ -48,17 +48,7 @@ export function ShareAnswer(props) {
     setBackgroundCo(await AsyncStorage.getItem('@backgroundColor'))
     setImgUrl(await AsyncStorage.getItem('@imageUrl'))
   }
-  async function sharePic() {
-    const result = await captureRef(viewRef, {
-      result: 'tmpfile',
-      height: pixels,
-      width: pixels,
-      quality: 1,
-      format: 'png'
-    })
-    setResult(result)
-    await Sharing.shareAsync(result)
-  }
+
   async function returnImage() {
     const imageRef = refs(storage, 'imageprofile/' + user.uid)
     setUrlImage(await getDownloadURL(imageRef))
@@ -66,28 +56,39 @@ export function ShareAnswer(props) {
   useEffect(() => {
     returnImage()
     returnData()
+    setTimeout(() => {
+      capturePhoto()
+    }, 1000)
   }, [])
-
+  async function capturePhoto() {
+    const imageURI = await viewRef.current.capture()
+    await Sharing.shareAsync(imageURI)
+  }
   return (
     <ScrollView>
-      <VStack ref={viewRef} flex="1">
-        <VStack style={styles.header}></VStack>
-        <Image
-          style={styles.avatar}
-          source={{
-            uri:
-              urlImage || 'https://bootdey.com/img/Content/avatar/avatar6.png'
-          }}
-        />
-        <VStack mt={'10'} style={styles.bodyContent}>
-          <Text style={styles.name}>{user.name}</Text>
-          <Button title="a" onPress={() => sharePic()} />
-          <Text style={styles.info}>ESSA É MINHA OPINIÃO</Text>
-          <Divider></Divider>
-          <Text mt={'4'} style={styles.title}>
-            {question}
-          </Text>
-          <VStack mt="3" flexDirection={'row'}>
+      <ViewShot
+        ref={viewRef}
+        style={{ flex: 1 }}
+        options={{ format: 'jpg', quality: 1.0 }}
+      >
+        <VStack backgroundColor={'white'} flex="1">
+          <VStack style={styles.header}></VStack>
+          <Image
+            style={styles.avatar}
+            source={{
+              uri:
+                urlImage || 'https://bootdey.com/img/Content/avatar/avatar6.png'
+            }}
+          />
+          <VStack mt={'10'} style={styles.bodyContent}>
+            <Text style={styles.name}>{user.name}</Text>
+
+            <Text style={styles.info}>ESSA É MINHA OPINIÃO</Text>
+            <Divider></Divider>
+            <Text mt={'4'} style={styles.title}>
+              {question}
+            </Text>
+
             <HStack
               justifyContent={'center'}
               borderColor={backgroudCo != null ? backgroudCo : 'green.500'}
@@ -114,6 +115,7 @@ export function ShareAnswer(props) {
                     }
                     p={1}
                     mr={4}
+                    size={54}
                     borderRadius={5}
                     height={120}
                     width={160}
@@ -121,15 +123,19 @@ export function ShareAnswer(props) {
                 )}
               </Center>
             </HStack>
-            <Text>{answer}</Text>
+            <Text mt={'4'} style={styles.title}>
+              {answer}
+            </Text>
           </VStack>
+          <Divider my="6"></Divider>
           <Image
-            src={'../assets/opvestabanner.png'}
-            resizeMode={'contain'}
-            size={54}
+            source={require('../assets/opvestabanner.png')}
+            width={'100%'}
+            height={'90'}
+            resizeMode="contain"
           />
         </VStack>
-      </VStack>
+      </ViewShot>
     </ScrollView>
   )
 }
