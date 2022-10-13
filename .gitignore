@@ -62,3 +62,6 @@ dist/
 
 # Thumbs.db files
 Thumbs.db
+
+# Visual Studio Code
+.vscode
