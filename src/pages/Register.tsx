@@ -26,6 +26,7 @@ import { Input } from '../components/input'
 import { Button } from '../components/button'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { MaskedTextInput } from 'react-native-mask-text'
+
 const Stack = createNativeStackNavigator()
 
 function ScreenRegister({ navigation }) {
@@ -89,6 +90,28 @@ function ScreenRegister({ navigation }) {
         data.sort((a, b) => a.nome.localeCompare(b.nome))
         setListStates(data)
       })
+  }
+
+  function validateDate(date) {
+    const dataAux = date.split('/')
+    const ano = dataAux[2]
+    const mes = dataAux[1]
+    const dia = dataAux[0]
+    if (ano > 0) {
+      if (mes <= 0 || mes > 12) {
+        return false
+      }
+
+      if (dia > 31 || dia <= 0) {
+        return false
+      }
+
+      if (ano < 1850 || ano > 2022) {
+        return false
+      }
+    } else {
+      return true
+    }
   }
 
   useEffect(() => {
@@ -256,6 +279,7 @@ function ScreenRegister({ navigation }) {
                   <Select.Item key={b.id} label={b.nome} value={b.nome} />
                 ))}
               </Select>
+
               <Text>Bairro:</Text>
               <Input
                 placeholder="Bairro"
@@ -361,6 +385,9 @@ function ScreenRegister({ navigation }) {
                         'Verifique se todos os campos foram preenchidos.',
                         ToastAndroid.LONG
                       )
+                    }
+                    if (validateDate(birthDate) === false) {
+                      ToastAndroid.show('Data inválida', ToastAndroid.LONG)
                     } else {
                       setShowModalLocal(true)
                       setShowModal(false)
@@ -386,6 +413,7 @@ export function Register() {
     </Stack.Navigator>
   )
 }
+
 const styles = StyleSheet.create({
   input: {
     color: '#004987',
