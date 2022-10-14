@@ -1,7 +1,6 @@
-import React, { useContext, useState, useCallback, useEffect } from 'react'
-
+import React, { useContext, useState, useEffect, useCallback } from 'react'
 import { ToastAndroid, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import { VStack, Text, Divider, ScrollView } from 'native-base'
+import { VStack, Text, Divider, ScrollView, Modal } from 'native-base'
 import { useIsFocused } from '@react-navigation/native'
 import * as ImagePicker from 'expo-image-picker'
 import { UserContext } from '../contexts/UserContext'
@@ -14,11 +13,20 @@ import { defaultStorage as storage } from '../utils/firebase'
 
 export function Profile() {
   const { user }: { user: User } = useContext(UserContext)
+  const { deleteAccount } = useContext(UserContext)
+
   const [editT, setEditT] = useState(false)
   const [newName, setNewName] = useState(user.name)
   const [newPhone, setNewPhone] = useState(user.phone)
   const [urlImage, setUrlImage] = useState(null)
+  const [urlImageAds, setUrlImageAds] = useState(null)
+  const [showModalLocal, setShowModalLocal] = useState(false)
   const isFocused = useIsFocused()
+
+  const returnAds = useCallback(async () => {
+    const imageAds = refs(storage, 'stateannounc/' + user.state + '.png')
+    setUrlImageAds(await getDownloadURL(imageAds))
+  }, [user.state])
 
   function updateName() {
     const db = getDatabase()
@@ -36,8 +44,8 @@ export function Profile() {
   }, [user.uid])
 
   useEffect(() => {
-    isFocused && returnImage()
-  }, [isFocused, returnImage])
+    isFocused && returnImage() && returnAds()
+  }, [isFocused, returnImage, returnAds])
 
   async function uploadImage() {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -140,11 +148,57 @@ export function Profile() {
               ></Button>
             ) : null}
           </VStack>
+          {editT ? (
+            <Button
+              mt={'2'}
+              width={'50%'}
+              title="Excluir Conta"
+              onPress={() => setShowModalLocal(true)}
+            ></Button>
+          ) : null}
         </VStack>
+        <VStack style={styles.containerAds}>
+          <Divider my="3"></Divider>
+          <Image
+            style={styles.adsBanner}
+            resizeMode="contain"
+            source={{
+              uri: urlImageAds || null
+            }}
+          />
+        </VStack>
+        <Modal
+          size={'lg'}
+          isOpen={showModalLocal}
+          onClose={() => setShowModalLocal(false)}
+        >
+          <Modal.Content padding="4">
+            <Modal.Header marginBottom={'4'}>
+              Deseja excluir a sua conta?
+            </Modal.Header>
+            <VStack mt="3" flexDirection={'row'}>
+              <Button
+                width={'50%'}
+                mr="2"
+                title="Sim"
+                onPress={deleteAccount}
+              />
+
+              {editT ? (
+                <Button
+                  width={'50%'}
+                  title="Não"
+                  onPress={() => setShowModalLocal(false)}
+                ></Button>
+              ) : null}
+            </VStack>
+          </Modal.Content>
+        </Modal>
       </VStack>
     </ScrollView>
   )
 }
+
 const styles = StyleSheet.create({
   header: {
     backgroundColor: '#004987',
@@ -180,7 +234,19 @@ const styles = StyleSheet.create({
     margin: 10,
     fontSize: 20
   },
-  example: {
-    paddingVertical: 10
+  adsBanner: {
+    paddingVertical: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    borderWidth: 1,
+    borderColor: 'black'
+  },
+  containerAds: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: 1
   }
 })
