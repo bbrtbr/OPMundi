@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
+
 import { UserContext } from '../contexts/UserContext'
 import {
   VStack,
@@ -9,8 +10,8 @@ import {
   Divider,
   Box,
   HStack,
-  Circle,
-  Image
+  Image,
+  Center
 } from 'native-base'
 import type { Form } from '../models/form'
 import type { User } from '../models/user'
@@ -18,6 +19,7 @@ import { getFormsFromDatabase } from '../database/form'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { FormPage } from './FormPage'
 import { useIsFocused } from '@react-navigation/native'
+import { ShareAnswer } from './ShareAnswer'
 
 const Stack = createNativeStackNavigator()
 
@@ -43,18 +45,23 @@ function Dash({ navigation }) {
   }
 
   useEffect(() => {
-    getForms()
     isFocused && getForms()
   }, [isFocused])
 
-  const formsToBeAnswered = forms.filter(form => {
+  const userForms = forms.filter(form => {
+    if (!form.stateInitials) return true
+    if (form.stateInitials === user.state) return true
+    return false
+  })
+
+  const formsToBeAnswered = userForms.filter(form => {
     const answers = form.answers
     if (!answers) return true
     const keys: string[] = Object.keys(answers)
     return !keys.includes(user.uid)
   })
 
-  const formsAlreadyAnswered = forms.filter(form => {
+  const formsAlreadyAnswered = userForms.filter(form => {
     const answers = form.answers
     if (!answers) return false
     const keys: string[] = Object.keys(answers)
@@ -63,7 +70,7 @@ function Dash({ navigation }) {
 
   return (
     <VStack flex={1} bg="white" px={4} pt={0}>
-      <Heading my={2}>Minhas opniões</Heading>
+      <Heading my={2}>Minhas opiniões</Heading>
       <VStack flex={1}>
         <Text fontSize={'md'} my={2}>
           A serem respondidas
@@ -115,31 +122,31 @@ function Dash({ navigation }) {
                 alignItems={'flex-start'}
                 borderRadius={'md'}
               >
-                <VStack>
-                  <Text color="gray.400" fontSize="16" mb={2}>
+                <VStack mb={2}>
+                  <Text color="gray.400" fontSize="16">
                     {item.question}
                   </Text>
                 </VStack>
-                <HStack>
-                  <Circle
+                <HStack alignItems="center">
+                  <Center
                     backgroundColor={item.answers[user.uid].backgroundColor}
                     p={1}
                     mr={2}
-                    borderRadius={'full'}
-                    width={10}
-                    height={10}
+                    width={8}
+                    height={5}
+                    borderRadius={'sm'}
                   >
                     {item.answers[user.uid].imageUrl && (
                       <Image
                         src={item.answers[user.uid].imageUrl}
                         resizeMode={'contain'}
-                        borderRadius={'full'}
-                        size={8}
+                        width={8}
+                        height={5}
                         alt={item.answers[user.uid].itemText}
                       />
                     )}
-                  </Circle>
-                  <Text color="gray.400" fontSize="16" mt={2} isTruncated>
+                  </Center>
+                  <Text color="gray.400" fontSize="16" isTruncated>
                     {item.answers[user.uid].itemText}
                   </Text>
                 </HStack>
@@ -157,6 +164,7 @@ export function Dashboard() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Dashboard" component={Dash} />
       <Stack.Screen name="FormPage" component={FormPage} />
+      <Stack.Screen name="ShareAnswer" component={ShareAnswer} />
     </Stack.Navigator>
   )
 }
