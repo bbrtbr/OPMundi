@@ -10,9 +10,11 @@ export interface Form {
   items: QuestionItem[]
   answers?: Answer[]
   coverage?: Coverage
-  state?: string
+  stateInitials?: string
+  stateName?: string
   city?: string
   district?: string
+  expirationDate?: string
   macs?: string[]
   imeis?: string[]
   uids?: string[]
