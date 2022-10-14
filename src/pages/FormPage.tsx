@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { UserContext } from '../contexts/UserContext'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ToastAndroid, TouchableOpacity } from 'react-native'
 import {
   VStack,
@@ -22,6 +23,16 @@ export function FormPage(props) {
   const [selectedItem, setSelectedItem] = useState<QuestionItem | null>(null)
   const { user }: { user: User } = useContext(UserContext)
 
+  async function ShareAns() {
+    await AsyncStorage.setItem('@question', props.route.params.question)
+    await AsyncStorage.setItem('@answer', selectedItem.itemText)
+    await AsyncStorage.setItem('@backgroundColor', selectedItem.backgroundColor)
+    await AsyncStorage.setItem(
+      '@imageUrl',
+      selectedItem.imageUrl ? selectedItem.imageUrl : 'null'
+    )
+    props.navigation.navigate('ShareAnswer')
+  }
   async function sendAnswerToDatabase() {
     const currentDate: Date = new Date()
     const answer: Answer = {
@@ -62,9 +73,8 @@ export function FormPage(props) {
           {selectedItem?.imageUrl ? (
             selectedItem?.imageUrl && (
               <Image
-                src={selectedItem?.imageUrl}
+                src={selectedItem.imageUrl}
                 resizeMode={'contain'}
-                borderRadius={5}
                 size={54}
                 height={120}
                 width={160}
@@ -87,12 +97,21 @@ export function FormPage(props) {
           )}
         </Center>
       </HStack>
-      <Button
-        onPress={sendAnswerToDatabase}
-        title="Enviar"
-        width={'100%'}
-        isDisabled={selectedItem === null}
-      />
+      <VStack mt="3" flexDirection={'row'}>
+        <Button
+          onPress={sendAnswerToDatabase}
+          title="Enviar"
+          width={'50%'}
+          mr="1"
+          isDisabled={selectedItem === null}
+        />
+        <Button
+          onPress={ShareAns}
+          title="Espalhar"
+          width={'50%'}
+          isDisabled={selectedItem === null}
+        />
+      </VStack>
       <FlatList
         data={props.route.params.items}
         style={{ flex: 1 }}
@@ -129,7 +148,6 @@ export function FormPage(props) {
                     <Image
                       src={item.imageUrl}
                       resizeMode={'contain'}
-                      borderRadius={5}
                       size={'full'}
                       alt={item.itemText}
                     />
